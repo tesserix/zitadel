@@ -53,11 +53,12 @@ export function DynamicTheme({
             const hasLeftRightStructure = childArray.length === 2;
 
             return (
-              <div className="relative mx-auto w-full max-w-[1100px] px-8 py-4">
-                <Card>
-                  <div className="flex min-h-[400px]">
+              <div className="relative mx-auto w-full max-w-[1100px] px-4 py-4 md:px-8">
+                <Card data-login-card>
+                  {/* The layout only switches after hydration, so this branch is what a phone renders first. */}
+                  <div className="flex flex-col md:min-h-[400px] md:flex-row">
                     {/* Left side: First child + branding */}
-                    <div className="relative flex w-1/2 flex-col justify-center overflow-hidden p-4 lg:p-8">
+                    <div className="relative flex w-full flex-col justify-center overflow-hidden p-4 md:w-1/2 lg:p-8">
                       <AuroraBackground branding={branding} intensity={tenant?.auroraIntensity} />
                       <div className="relative z-10 mx-auto max-w-[440px] space-y-8">
                         {/* Logo and branding */}
@@ -89,7 +90,7 @@ export function DynamicTheme({
                     </div>
 
                     {/* Right side: Second child (form) or single child if old format */}
-                    <div className="flex w-1/2 items-center justify-center p-4 lg:p-8">
+                    <div className="flex w-full items-center justify-center p-4 md:w-1/2 lg:p-8">
                       <div className="w-full max-w-[440px]">
                         <div className="space-y-6">{hasLeftRightStructure ? rightContent : leftContent}</div>
                       </div>
@@ -108,8 +109,8 @@ export function DynamicTheme({
 
             return (
               <div className="relative mx-auto w-full max-w-[440px] px-4 py-4">
-                <AuroraBackground branding={branding} intensity={tenant?.auroraIntensity} />
-                <Card>
+                <Card data-login-card className="relative overflow-hidden">
+                  <AuroraBackground branding={branding} intensity={tenant?.auroraIntensity} />
                   <div className="relative z-10 mx-auto flex flex-col items-center space-y-8">
                     <div className="relative flex flex-row items-center justify-center">
                       {branding && (
