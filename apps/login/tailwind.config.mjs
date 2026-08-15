@@ -102,26 +102,28 @@ export default {
           dark: "rgba(135,149,161,.2)",
           light: "rgba(135,149,161,.2)",
         },
+        // Inside an aurora panel these resolve to the tenant palette; the hex is
+        // the fallback everywhere else.
         input: {
           light: {
-            label: "#000000c7",
-            background: "#00000004",
-            border: "#1a191954",
+            label: "var(--aurora-label,#000000c7)",
+            background: "var(--aurora-input,#00000004)",
+            border: "var(--aurora-input-border,#1a191954)",
             hoverborder: "1a1b1b",
           },
           dark: {
-            label: "#ffffffc7",
-            background: "#00000020",
-            border: "#f9f7f775",
+            label: "var(--aurora-label,#ffffffc7)",
+            background: "var(--aurora-input,#00000020)",
+            border: "var(--aurora-input-border,#f9f7f775)",
             hoverborder: "#e0e0e0",
           },
         },
         button: {
           light: {
-            border: "#0000001f",
+            border: "var(--aurora-input-border,#0000001f)",
           },
           dark: {
-            border: "#ffffff1f",
+            border: "var(--aurora-input-border,#ffffff1f)",
           },
         },
       },
