@@ -1,0 +1,95 @@
+name: Tesserix Login Release
+
+# Fork-only. Upstream's pack.yml builds the whole estate on its own release
+# cadence; this builds just the themed login image on a -aurora tag.
+on:
+  push:
+    tags: ['v*-aurora.*']
+  workflow_dispatch:
+
+concurrency:
+  group: tesserix-login-release-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: third-party/zitadel-login
+
+permissions:
+  contents: read
+  packages: write
+  security-events: write
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Both are workspace dependencies of apps/login and are not built by
+      # `pnpm install`; without them the Next build cannot resolve them.
+      - name: Build workspace packages
+        run: |
+          pnpm --filter @zitadel/proto generate
+          pnpm --filter @zitadel/client build
+
+      - name: Test
+        run: pnpm --filter @zitadel/login test-unit
+
+      # NEXT_PUBLIC_* is inlined here, from apps/login/.env — the theme cannot
+      # be changed after this step.
+      - name: Build
+        run: pnpm --filter @zitadel/login build
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Resolve image tag
+        id: meta
+        run: |
+          if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+            echo "tag=${GITHUB_REF#refs/tags/}" >> "$GITHUB_OUTPUT"
+          else
+            echo "tag=${GITHUB_REF_NAME//\//-}-${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+          fi
+
+      # No :latest — the GAR ghcr-remote proxy caches by tag and serves a stale
+      # manifest when one is re-pushed.
+      - name: Build and push
+        env:
+          IMAGE_TAG: ${{ steps.meta.outputs.tag }}
+          OWNER: ${{ github.repository_owner }}
+        run: |
+          IMAGE="${REGISTRY}/${OWNER}/${IMAGE_NAME}:${IMAGE_TAG}"
+          docker build --platform linux/amd64 -t "$IMAGE" apps/login
+          docker push "$IMAGE"
+
+      - name: Security scan
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tag }}
+          format: sarif
+          output: trivy-results.sarif
+          severity: CRITICAL,HIGH
+          exit-code: "0"
+
+      - name: Upload scan results
+        if: always()
+        continue-on-error: true
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: trivy-results.sarif
