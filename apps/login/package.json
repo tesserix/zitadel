@@ -37,6 +37,7 @@
     "@opentelemetry/winston-transport": "^0.28.0",
     "@radix-ui/react-tooltip": "^1.2.8",
     "@tailwindcss/forms": "^0.5.11",
+    "@tesserix/web": "^1.9.1",
     "clsx": "^2.1.1",
     "copy-to-clipboard": "^3.3.3",
     "deepmerge": "^4.3.1",
