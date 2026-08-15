@@ -30,6 +30,7 @@ import {
   VerifyU2FRegistrationRequest,
 } from "@zitadel/proto/zitadel/user/v2/user_service_pb";
 import { getTranslations } from "next-intl/server";
+import { TenantLogin, tenantLoginFromMetadata } from "./tenant-branding";
 
 import { getUserAgent } from "./fingerprint";
 
@@ -147,6 +148,40 @@ export async function getBrandingSettings({
 
   return freshCache(
     instanceCacheKey(serviceConfig, `getBrandingSettings-${organization || "instance"}`),
+    fetcher,
+    getTTLForKey("getBrandingSettings", longCacheTTL),
+  );
+}
+
+/**
+ * Per-tenant login copy and aurora strength, held as org metadata because
+ * the branding policy has no field for them.
+ */
+export async function getTenantLogin({
+  serviceConfig,
+  organization,
+}: WithServiceConfig<{
+  organization?: string;
+}>): Promise<TenantLogin> {
+  if (!organization) {
+    return tenantLoginFromMetadata([]);
+  }
+
+  const fetcher = async () => {
+    const orgService: Client<typeof OrganizationService> = await createServiceForHost(OrganizationService, serviceConfig);
+
+    return (
+      orgService
+        .listOrganizationMetadata({ organizationId: organization }, {})
+        .then((resp) => tenantLoginFromMetadata(resp?.metadata ?? []))
+        // Branding must never take the login page down, and reading metadata
+        // needs a permission the login service user is not guaranteed to hold.
+        .catch(() => tenantLoginFromMetadata([]))
+    );
+  };
+
+  return freshCache(
+    instanceCacheKey(serviceConfig, `getTenantLogin-${organization}`),
     fetcher,
     getTTLForKey("getBrandingSettings", longCacheTTL),
   );

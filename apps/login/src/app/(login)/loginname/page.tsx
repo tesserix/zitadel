@@ -3,7 +3,13 @@ import { SignInWithIdp } from "@/components/sign-in-with-idp";
 import { Translated } from "@/components/translated";
 import { UsernameForm } from "@/components/username-form";
 import { getServiceConfig } from "@/lib/service-url";
-import { getActiveIdentityProviders, getBrandingSettings, getDefaultOrg, getLoginSettings } from "@/lib/zitadel";
+import {
+  getActiveIdentityProviders,
+  getBrandingSettings,
+  getDefaultOrg,
+  getLoginSettings,
+  getTenantLogin,
+} from "@/lib/zitadel";
 import { Organization } from "@zitadel/proto/zitadel/org/v2/org_pb";
 import { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
@@ -45,8 +51,10 @@ export default async function Page(props: { searchParams: Promise<Record<string 
 
   const branding = await getBrandingSettings({ serviceConfig, organization: organization ?? defaultOrganization });
 
+  const tenant = await getTenantLogin({ serviceConfig, organization: organization ?? defaultOrganization });
+
   return (
-    <DynamicTheme branding={branding}>
+    <DynamicTheme branding={branding} tenant={tenant}>
       <div className="flex flex-col space-y-4">
         <h1>
           <Translated i18nKey="title" namespace="loginname" />
