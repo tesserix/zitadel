@@ -13,6 +13,9 @@ export default defineConfig({
     },
   },
   test: {
+    // Its ESM entry re-exports extensionless directory paths, which only a
+    // bundler resolves; inlining lets Vite handle it as Next does.
+    server: { deps: { inline: ["@tesserix/web"] } },
     include: ["src/**/*.test.ts", "src/**/*.test.tsx", "tests/**/*.test.ts"],
     exclude: ["**/*.integration.test.ts"],
     environment: "jsdom",
