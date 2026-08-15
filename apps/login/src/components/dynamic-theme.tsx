@@ -1,9 +1,12 @@
 "use client";
 
 import { Logo } from "@/components/logo";
+import { auroraIntensity, brandColor } from "@/lib/aurora";
 import { TenantLogin } from "@/lib/tenant-branding";
 import { useResponsiveLayout } from "@/lib/theme-hooks";
+import { AuroraAuthPanel } from "@tesserix/web";
 import { BrandingSettings } from "@zitadel/proto/zitadel/settings/v2/branding_settings_pb";
+import { useTheme } from "next-themes";
 import React, { Children, ReactNode } from "react";
 import { AuroraBackground } from "./aurora-background";
 import { Card } from "./card";
@@ -31,6 +34,9 @@ export function DynamicTheme({
   tenant?: TenantLogin;
 }) {
   const { isSideBySide } = useResponsiveLayout();
+  const { resolvedTheme } = useTheme();
+  // The palette is inline, so it cannot follow prefers-color-scheme on its own.
+  const mode = resolvedTheme === "dark" ? "dark" : "light";
 
   // Resolve children immediately to avoid passing functions through React
   const actualChildren: ReactNode = React.useMemo(() => {
@@ -108,44 +114,37 @@ export function DynamicTheme({
             const hasMultipleChildren = childArray.length > 1;
 
             return (
-              <div className="relative mx-auto w-full max-w-[440px] px-4 py-4">
-                <Card data-login-card className="relative overflow-hidden">
-                  <AuroraBackground branding={branding} intensity={tenant?.auroraIntensity} />
-                  <div className="relative z-10 mx-auto flex flex-col items-center space-y-8">
-                    <div className="relative flex flex-row items-center justify-center">
-                      {branding && (
-                        <Logo
-                          lightSrc={branding.lightTheme?.logoUrl}
-                          darkSrc={branding.darkTheme?.logoUrl}
-                          height={150}
-                          width={150}
-                        />
-                      )}
-                    </div>
+              <AuroraAuthPanel
+                data-login-card
+                brandColor={brandColor(branding, mode)}
+                mode={mode}
+                intensity={auroraIntensity(tenant?.auroraIntensity)}
+                tagline={tenant?.tagline}
+                logo={
+                  branding && (
+                    <Logo
+                      lightSrc={branding.lightTheme?.logoUrl}
+                      darkSrc={branding.darkTheme?.logoUrl}
+                      height={150}
+                      width={150}
+                    />
+                  )
+                }
+                className="mx-auto min-h-0 rounded-[1.5rem] py-10"
+              >
+                {hasMultipleChildren ? (
+                  <>
+                    {/* Title and description - center aligned */}
+                    <div className="mb-4 flex w-full flex-col items-center text-center">{titleContent}</div>
 
-                    {tenant?.tagline && (
-                      <p data-tenant-tagline className="text-center text-gray-700 dark:text-gray-300">
-                        {tenant.tagline}
-                      </p>
-                    )}
-
-                    {hasMultipleChildren ? (
-                      <>
-                        {/* Title and description - center aligned */}
-                        <div className="mb-4 flex w-full flex-col items-center text-center">{titleContent}</div>
-
-                        {/* Form content - left aligned */}
-                        <div className="w-full">{formContent}</div>
-                      </>
-                    ) : (
-                      // Single child - use original behavior
-                      <div className="w-full">{actualChildren}</div>
-                    )}
-
-                    <div className="flex flex-row justify-between"></div>
-                  </div>
-                </Card>
-              </div>
+                    {/* Form content - left aligned */}
+                    <div className="w-full">{formContent}</div>
+                  </>
+                ) : (
+                  // Single child - use original behavior
+                  <div className="w-full">{actualChildren}</div>
+                )}
+              </AuroraAuthPanel>
             );
           })()}
     </ThemeWrapper>
