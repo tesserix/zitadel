@@ -1,9 +1,11 @@
 "use client";
 
 import { Logo } from "@/components/logo";
+import { TenantLogin } from "@/lib/tenant-branding";
 import { useResponsiveLayout } from "@/lib/theme-hooks";
 import { BrandingSettings } from "@zitadel/proto/zitadel/settings/v2/branding_settings_pb";
 import React, { Children, ReactNode } from "react";
+import { AuroraBackground } from "./aurora-background";
 import { Card } from "./card";
 import { ThemeWrapper } from "./theme-wrapper";
 
@@ -21,10 +23,12 @@ import { ThemeWrapper } from "./theme-wrapper";
  */
 export function DynamicTheme({
   branding,
+  tenant,
   children,
 }: {
   children: ReactNode | ((isSideBySide: boolean) => ReactNode);
   branding?: BrandingSettings;
+  tenant?: TenantLogin;
 }) {
   const { isSideBySide } = useResponsiveLayout();
 
@@ -53,8 +57,9 @@ export function DynamicTheme({
                 <Card>
                   <div className="flex min-h-[400px]">
                     {/* Left side: First child + branding */}
-                    <div className="from-primary-50 to-primary-100 dark:from-primary-900/20 dark:to-primary-800/20 flex w-1/2 flex-col justify-center bg-gradient-to-br p-4 lg:p-8">
-                      <div className="mx-auto max-w-[440px] space-y-8">
+                    <div className="relative flex w-1/2 flex-col justify-center overflow-hidden p-4 lg:p-8">
+                      <AuroraBackground branding={branding} intensity={tenant?.auroraIntensity} />
+                      <div className="relative z-10 mx-auto max-w-[440px] space-y-8">
                         {/* Logo and branding */}
                         {branding && (
                           <Logo
@@ -63,6 +68,12 @@ export function DynamicTheme({
                             height={150}
                             width={150}
                           />
+                        )}
+
+                        {tenant?.tagline && (
+                          <p data-tenant-tagline className="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+                            {tenant.tagline}
+                          </p>
                         )}
 
                         {/* First child content (title, description) - only if we have left/right structure */}
@@ -97,8 +108,9 @@ export function DynamicTheme({
 
             return (
               <div className="relative mx-auto w-full max-w-[440px] px-4 py-4">
+                <AuroraBackground branding={branding} intensity={tenant?.auroraIntensity} />
                 <Card>
-                  <div className="mx-auto flex flex-col items-center space-y-8">
+                  <div className="relative z-10 mx-auto flex flex-col items-center space-y-8">
                     <div className="relative flex flex-row items-center justify-center">
                       {branding && (
                         <Logo
@@ -109,6 +121,12 @@ export function DynamicTheme({
                         />
                       )}
                     </div>
+
+                    {tenant?.tagline && (
+                      <p data-tenant-tagline className="text-center text-gray-700 dark:text-gray-300">
+                        {tenant.tagline}
+                      </p>
+                    )}
 
                     {hasMultipleChildren ? (
                       <>
