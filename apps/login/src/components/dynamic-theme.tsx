@@ -6,7 +6,6 @@ import { TenantLogin } from "@/lib/tenant-branding";
 import { useResponsiveLayout } from "@/lib/theme-hooks";
 import { AuroraAuthPanel } from "@tesserix/web";
 import { BrandingSettings } from "@zitadel/proto/zitadel/settings/v2/branding_settings_pb";
-import { useTheme } from "next-themes";
 import React, { Children, ReactNode } from "react";
 import { AuroraBackground } from "./aurora-background";
 import { Card } from "./card";
@@ -34,9 +33,6 @@ export function DynamicTheme({
   tenant?: TenantLogin;
 }) {
   const { isSideBySide } = useResponsiveLayout();
-  const { resolvedTheme } = useTheme();
-  // The palette is inline, so it cannot follow prefers-color-scheme on its own.
-  const mode = resolvedTheme === "dark" ? "dark" : "light";
 
   // Resolve children immediately to avoid passing functions through React
   const actualChildren: ReactNode = React.useMemo(() => {
@@ -116,10 +112,9 @@ export function DynamicTheme({
             return (
               <AuroraAuthPanel
                 data-login-card
-                brandColor={brandColor(branding, mode)}
-                mode={mode}
+                brandColor={brandColor(branding)}
+                mode="auto"
                 intensity={auroraIntensity(tenant?.auroraIntensity)}
-                tagline={tenant?.tagline}
                 logo={
                   branding && (
                     <Logo
@@ -130,12 +125,12 @@ export function DynamicTheme({
                     />
                   )
                 }
-                className="mx-auto min-h-0 rounded-[1.5rem] py-10"
+                className="min-h-dvh"
               >
                 {hasMultipleChildren ? (
                   <>
                     {/* Title and description - center aligned */}
-                    <div className="mb-4 flex w-full flex-col items-center text-center">{titleContent}</div>
+                    <div className="mb-7 flex w-full flex-col items-center text-center">{titleContent}</div>
 
                     {/* Form content - left aligned */}
                     <div className="w-full">{formContent}</div>

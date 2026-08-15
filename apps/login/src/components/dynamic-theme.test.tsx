@@ -37,7 +37,7 @@ describe("DynamicTheme aurora branding", () => {
     );
 
     expect(container.querySelector("[data-aurora-root]")).toBeTruthy();
-    expect(container.querySelectorAll("[data-aurora-wash]")).toHaveLength(6);
+    expect(container.querySelectorAll("[data-aurora-wash]")).toHaveLength(3);
   });
 
   it("shows the tenant's tagline on the brand panel", () => {
@@ -70,7 +70,7 @@ describe("DynamicTheme aurora branding", () => {
       </DynamicTheme>,
     );
 
-    expect(container.querySelectorAll('[data-aurora="light"] [data-aurora-wash]')).toHaveLength(0);
+    expect(container.querySelectorAll("[data-aurora-root] [data-aurora-wash]")).toHaveLength(0);
   });
 
   it("renders the design system panel in the top-to-bottom layout", () => {
@@ -84,9 +84,39 @@ describe("DynamicTheme aurora branding", () => {
     );
 
     const panel = container.querySelector<HTMLElement>("[data-login-card]");
-    expect(panel!.style.getPropertyValue("--aurora-accent")).toBeTruthy();
+    expect(panel!.querySelector("style")!.textContent).toContain("--aurora-accent");
     expect(panel!.querySelectorAll("[data-aurora-wash]")).toHaveLength(3);
     expect(getByTestId("signin")).toBeTruthy();
+  });
+
+  it("hands the dark surface to the theme class instead of resolving it in JS", () => {
+    process.env = { ...originalEnv, NEXT_PUBLIC_THEME_LAYOUT: "top-to-bottom" };
+
+    const { container } = render(
+      <DynamicTheme branding={branding}>
+        <h1>Welcome back</h1>
+        <form />
+      </DynamicTheme>,
+    );
+
+    const css = container.querySelector("[data-login-card] style")!.textContent ?? "";
+    expect(css).toContain("--aurora-canvas:#FAFBF8");
+    expect(css).toContain("--aurora-canvas:#0F0E2A");
+  });
+
+  it("lets the panel fill the viewport rather than sit in a card", () => {
+    process.env = { ...originalEnv, NEXT_PUBLIC_THEME_LAYOUT: "top-to-bottom" };
+
+    const { container } = render(
+      <DynamicTheme branding={branding}>
+        <h1>Welcome back</h1>
+        <form />
+      </DynamicTheme>,
+    );
+
+    const panel = container.querySelector<HTMLElement>("[data-login-card]")!;
+    expect(panel.className).toContain("min-h-dvh");
+    expect(panel.className).not.toContain("rounded");
   });
 
   it("leaves the page's own heading as the only one in the panel", () => {
@@ -115,17 +145,24 @@ describe("DynamicTheme aurora branding", () => {
     expect(container.querySelectorAll("[data-aurora-wash]")).toHaveLength(0);
   });
 
-  it("shows the tenant's tagline in the top-to-bottom layout", () => {
+  // The page supplies its own heading and description, so the brand-panel
+  // tagline would push a second subtitle above the title.
+  it("keeps the page's own copy directly above the form", () => {
     process.env = { ...originalEnv, NEXT_PUBLIC_THEME_LAYOUT: "top-to-bottom" };
 
-    const { getByText } = render(
+    const { container } = render(
       <DynamicTheme branding={branding} tenant={{ tagline: "Identity for every team", auroraIntensity: 1 }}>
-        <h1>Welcome back</h1>
-        <form />
+        <div>
+          <h1>Welcome back</h1>
+          <p>Enter your login data.</p>
+        </div>
+        <form data-testid="signin" />
       </DynamicTheme>,
     );
 
-    expect(getByText("Identity for every team")).toBeTruthy();
+    expect(container.querySelector("[data-tenant-tagline]")).toBeNull();
+    const order = Array.from(container.querySelectorAll("h1, p, form")).map((el) => el.tagName);
+    expect(order).toEqual(["H1", "P", "FORM"]);
   });
 
   // The layout is picked after hydration, so the server always renders the

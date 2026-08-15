@@ -18,6 +18,12 @@ html {
   --dark-background-color: #000000;
 }
 
+// Primary actions inside an aurora panel take the palette's gradient and lift.
+[data-login-card] .bg-primary-light-500 {
+  background-image: var(--aurora-button);
+  box-shadow: var(--aurora-button-shadow);
+}
+
 .form-checkbox {
   position: relative;
 }

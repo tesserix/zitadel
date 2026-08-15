@@ -1,10 +1,10 @@
 import { PRIMARY } from "@/helpers/colors";
-import { deriveAuroraPalette, type AuroraIntensity, type AuroraMode } from "@tesserix/web";
+import { deriveAuroraPalette, type AuroraIntensity } from "@tesserix/web";
 import { BrandingSettings } from "@zitadel/proto/zitadel/settings/v2/branding_settings_pb";
 
-/** Tenant primary colour for the active theme, guarded so the palette never throws. */
-export function brandColor(branding: BrandingSettings | undefined, mode: AuroraMode): string {
-  const configured = (mode === "dark" ? branding?.darkTheme : branding?.lightTheme)?.primaryColor;
+/** One hue feeds both surfaces, guarded so the palette never throws on tenant input. */
+export function brandColor(branding: BrandingSettings | undefined): string {
+  const configured = branding?.lightTheme?.primaryColor || branding?.darkTheme?.primaryColor;
   if (!configured) {
     return PRIMARY;
   }
