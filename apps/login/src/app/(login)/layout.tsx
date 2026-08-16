@@ -51,7 +51,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <Suspense
               fallback={
                 <BackgroundWrapper
-                  className={`bg-background-light-600 dark:bg-background-dark-600 relative flex min-h-screen flex-col justify-center`}
+                  className={`bg-background-light-600 dark:bg-background-dark-600 relative flex min-h-dvh flex-col justify-center`}
                 >
                   <div className="relative mx-auto w-full max-w-[440px] py-8">
                     <Skeleton>
@@ -66,11 +66,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             >
               <LanguageProvider>
                 <BackgroundWrapper
-                  className={`bg-background-light-600 dark:bg-background-dark-600 relative flex min-h-screen flex-col justify-center`}
+                  className={`bg-background-light-600 dark:bg-background-dark-600 relative flex min-h-dvh flex-col justify-center`}
                 >
-                  <div className="relative mx-auto w-full max-w-[1100px] py-8">
-                    <div>{children}</div>
-                    <div className="mx-auto flex max-w-[440px] flex-row items-center justify-end space-x-4 px-4 py-4 md:max-w-full md:px-8">
+                  {/* No max width here: the aurora surface is the page background. */}
+                  <div className="relative w-full">
+                    {children}
+                    <div className="absolute right-0 bottom-0 z-10 flex flex-row items-center space-x-4 px-4 py-4 md:px-8">
                       <LanguageSwitcher languages={languages} />
                       <ThemeSwitch />
                     </div>

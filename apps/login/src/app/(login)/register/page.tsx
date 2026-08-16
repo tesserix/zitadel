@@ -11,6 +11,7 @@ import {
   getLegalAndSupportSettings,
   getLoginSettings,
   getPasswordComplexitySettings,
+  getTenantLogin,
 } from "@/lib/zitadel";
 import { Organization } from "@zitadel/proto/zitadel/org/v2/org_pb";
 import { Metadata } from "next";
@@ -42,6 +43,8 @@ export default async function Page(props: { searchParams: Promise<Record<string 
 
   const branding = await getBrandingSettings({ serviceConfig, organization });
 
+  const tenant = await getTenantLogin({ serviceConfig, organization });
+
   const loginSettings = await getLoginSettings({ serviceConfig, organization });
 
   const identityProviders = await getActiveIdentityProviders({ serviceConfig, orgId: organization }).then((resp) => {
@@ -52,7 +55,7 @@ export default async function Page(props: { searchParams: Promise<Record<string 
 
   if (!loginSettings) {
     return (
-      <DynamicTheme branding={branding}>
+      <DynamicTheme branding={branding} tenant={tenant}>
         <div className="flex flex-col space-y-4">
           <h1>
             <Translated i18nKey="title" namespace="register" />
@@ -68,7 +71,7 @@ export default async function Page(props: { searchParams: Promise<Record<string 
 
   if (!loginSettings?.allowRegister && (!loginSettings.allowExternalIdp || identityProviders.length === 0)) {
     return (
-      <DynamicTheme branding={branding}>
+      <DynamicTheme branding={branding} tenant={tenant}>
         <div className="flex flex-col space-y-4">
           <h1>
             <Translated i18nKey="disabled.title" namespace="register" />
@@ -83,7 +86,7 @@ export default async function Page(props: { searchParams: Promise<Record<string 
   }
 
   return (
-    <DynamicTheme branding={branding}>
+    <DynamicTheme branding={branding} tenant={tenant}>
       <div className="flex flex-col space-y-4">
         <h1>
           <Translated i18nKey="title" namespace="register" />

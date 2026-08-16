@@ -1,9 +1,13 @@
 "use client";
 
 import { Logo } from "@/components/logo";
+import { auroraIntensity, brandColor } from "@/lib/aurora";
+import { TenantLogin } from "@/lib/tenant-branding";
 import { useResponsiveLayout } from "@/lib/theme-hooks";
+import { AuroraAuthPanel } from "@tesserix/web";
 import { BrandingSettings } from "@zitadel/proto/zitadel/settings/v2/branding_settings_pb";
 import React, { Children, ReactNode } from "react";
+import { AuroraBackground } from "./aurora-background";
 import { Card } from "./card";
 import { ThemeWrapper } from "./theme-wrapper";
 
@@ -21,10 +25,12 @@ import { ThemeWrapper } from "./theme-wrapper";
  */
 export function DynamicTheme({
   branding,
+  tenant,
   children,
 }: {
   children: ReactNode | ((isSideBySide: boolean) => ReactNode);
   branding?: BrandingSettings;
+  tenant?: TenantLogin;
 }) {
   const { isSideBySide } = useResponsiveLayout();
 
@@ -49,12 +55,14 @@ export function DynamicTheme({
             const hasLeftRightStructure = childArray.length === 2;
 
             return (
-              <div className="relative mx-auto w-full max-w-[1100px] px-8 py-4">
-                <Card>
-                  <div className="flex min-h-[400px]">
+              <div className="relative mx-auto w-full max-w-[1100px] px-4 py-4 md:px-8">
+                <Card data-login-card>
+                  {/* The layout only switches after hydration, so this branch is what a phone renders first. */}
+                  <div className="flex flex-col md:min-h-[400px] md:flex-row">
                     {/* Left side: First child + branding */}
-                    <div className="from-primary-50 to-primary-100 dark:from-primary-900/20 dark:to-primary-800/20 flex w-1/2 flex-col justify-center bg-gradient-to-br p-4 lg:p-8">
-                      <div className="mx-auto max-w-[440px] space-y-8">
+                    <div className="relative flex w-full flex-col justify-center overflow-hidden p-4 md:w-1/2 lg:p-8">
+                      <AuroraBackground branding={branding} intensity={tenant?.auroraIntensity} />
+                      <div className="relative z-10 mx-auto max-w-[440px] space-y-8">
                         {/* Logo and branding */}
                         {branding && (
                           <Logo
@@ -63,6 +71,12 @@ export function DynamicTheme({
                             height={150}
                             width={150}
                           />
+                        )}
+
+                        {tenant?.tagline && (
+                          <p data-tenant-tagline className="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+                            {tenant.tagline}
+                          </p>
                         )}
 
                         {/* First child content (title, description) - only if we have left/right structure */}
@@ -78,7 +92,7 @@ export function DynamicTheme({
                     </div>
 
                     {/* Right side: Second child (form) or single child if old format */}
-                    <div className="flex w-1/2 items-center justify-center p-4 lg:p-8">
+                    <div className="flex w-full items-center justify-center p-4 md:w-1/2 lg:p-8">
                       <div className="w-full max-w-[440px]">
                         <div className="space-y-6">{hasLeftRightStructure ? rightContent : leftContent}</div>
                       </div>
@@ -96,37 +110,36 @@ export function DynamicTheme({
             const hasMultipleChildren = childArray.length > 1;
 
             return (
-              <div className="relative mx-auto w-full max-w-[440px] px-4 py-4">
-                <Card>
-                  <div className="mx-auto flex flex-col items-center space-y-8">
-                    <div className="relative flex flex-row items-center justify-center">
-                      {branding && (
-                        <Logo
-                          lightSrc={branding.lightTheme?.logoUrl}
-                          darkSrc={branding.darkTheme?.logoUrl}
-                          height={150}
-                          width={150}
-                        />
-                      )}
-                    </div>
+              <AuroraAuthPanel
+                data-login-card
+                brandColor={brandColor(branding)}
+                mode="auto"
+                intensity={auroraIntensity(tenant?.auroraIntensity)}
+                logo={
+                  branding && (
+                    <Logo
+                      lightSrc={branding.lightTheme?.logoUrl}
+                      darkSrc={branding.darkTheme?.logoUrl}
+                      height={150}
+                      width={150}
+                    />
+                  )
+                }
+                className="min-h-dvh"
+              >
+                {hasMultipleChildren ? (
+                  <>
+                    {/* Title and description - center aligned */}
+                    <div className="mb-7 flex w-full flex-col items-center text-center">{titleContent}</div>
 
-                    {hasMultipleChildren ? (
-                      <>
-                        {/* Title and description - center aligned */}
-                        <div className="mb-4 flex w-full flex-col items-center text-center">{titleContent}</div>
-
-                        {/* Form content - left aligned */}
-                        <div className="w-full">{formContent}</div>
-                      </>
-                    ) : (
-                      // Single child - use original behavior
-                      <div className="w-full">{actualChildren}</div>
-                    )}
-
-                    <div className="flex flex-row justify-between"></div>
-                  </div>
-                </Card>
-              </div>
+                    {/* Form content - left aligned */}
+                    <div className="w-full">{formContent}</div>
+                  </>
+                ) : (
+                  // Single child - use original behavior
+                  <div className="w-full">{actualChildren}</div>
+                )}
+              </AuroraAuthPanel>
             );
           })()}
     </ThemeWrapper>
