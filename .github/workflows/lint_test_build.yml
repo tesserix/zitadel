@@ -52,6 +52,8 @@ jobs:
         with:
           version: v2.38.2
       - name: Install dependencies
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.PKG_READ_TOKEN }}
         run: pnpm install --frozen-lockfile
       - name: Set SHAs for nx affected commands
         uses: nrwl/nx-set-shas@v4

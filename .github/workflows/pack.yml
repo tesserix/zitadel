@@ -68,6 +68,8 @@ jobs:
           node-version: ${{ inputs.node_version }}
           cache: "pnpm"
       - name: Install dependencies
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.PKG_READ_TOKEN }}
         run: pnpm install --frozen-lockfile
       - name: Pack API and Login
         env:
@@ -122,6 +124,8 @@ jobs:
           node-version: ${{ inputs.node_version }}
           cache: "pnpm"
       - name: Install dependencies
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.PKG_READ_TOKEN }}
         run: pnpm install --frozen-lockfile
       - name: Build Linux API binaries
         env:

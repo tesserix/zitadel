@@ -200,6 +200,8 @@ jobs:
 
       - name: Install dependencies
         working-directory: login
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.PKG_READ_TOKEN }}
         run: pnpm install --frozen-lockfile
 
       - name: Create Release Pull Request

@@ -37,6 +37,8 @@ jobs:
       uses: pnpm/action-setup@v4
     - name: Generate gRPC Stubs and Static Assets
       if: matrix.language == 'go'
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.PKG_READ_TOKEN }}
       run: |
         pnpm install --frozen-lockfile
         pnpm nx run-many --nxBail --projects @zitadel/api --targets generate-stubs generate-statik generate-assets
