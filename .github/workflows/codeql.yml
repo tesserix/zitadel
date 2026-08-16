@@ -20,6 +20,10 @@ concurrency:
 jobs:
   CodeQL-Build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+      security-events: write
     strategy:
       fail-fast: false
       matrix:
