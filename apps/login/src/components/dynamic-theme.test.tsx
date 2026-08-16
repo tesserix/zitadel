@@ -100,7 +100,7 @@ describe("DynamicTheme aurora branding", () => {
     );
 
     const css = container.querySelector("[data-login-card] style")!.textContent ?? "";
-    expect(css).toContain("--aurora-canvas:#FAFBF8");
+    expect(css).toContain("--aurora-canvas:#F6F6FC");
     expect(css).toContain("--aurora-canvas:#0F0E2A");
   });
 
