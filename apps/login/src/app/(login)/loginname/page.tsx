@@ -1,4 +1,5 @@
 import { DynamicTheme } from "@/components/dynamic-theme";
+import { ProductLoginIntroduction } from "@/components/product-login-introduction";
 import { SignInWithIdp } from "@/components/sign-in-with-idp";
 import { Translated } from "@/components/translated";
 import { UsernameForm } from "@/components/username-form";
@@ -55,14 +56,16 @@ export default async function Page(props: { searchParams: Promise<Record<string 
 
   return (
     <DynamicTheme branding={branding} tenant={tenant}>
-      <div className="flex flex-col space-y-4">
-        <h1>
-          <Translated i18nKey="title" namespace="loginname" />
-        </h1>
-        <p className="ztdl-p">
-          <Translated i18nKey="description" namespace="loginname" />
-        </p>
-      </div>
+      <ProductLoginIntroduction>
+        <div className="flex flex-col space-y-4">
+          <h1>
+            <Translated i18nKey="title" namespace="loginname" />
+          </h1>
+          <p className="ztdl-p">
+            <Translated i18nKey="description" namespace="loginname" />
+          </p>
+        </div>
+      </ProductLoginIntroduction>
 
       <div className="w-full">
         {loginSettings?.allowLocalAuthentication && (
