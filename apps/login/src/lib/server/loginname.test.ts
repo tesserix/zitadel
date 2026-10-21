@@ -550,6 +550,8 @@ describe("sendLoginname", () => {
         });
 
         expect(result).toBeDefined();
+        expect(result).toHaveProperty("redirect");
+        if (!result || !("redirect" in result)) throw new Error("Expected a redirect result");
         expect(result?.redirect).toMatch(/^\/password\?/);
       });
 
@@ -608,6 +610,8 @@ describe("sendLoginname", () => {
       });
 
       expect(result).toBeDefined();
+      expect(result).toHaveProperty("redirect");
+      if (!result || !("redirect" in result)) throw new Error("Expected a redirect result");
       expect(result?.redirect).toMatch(/^\/register\?/);
       expect(result?.redirect).toContain("organization=org123");
       expect(result?.redirect).toContain("requestId=req123");
@@ -627,6 +631,8 @@ describe("sendLoginname", () => {
       });
 
       expect(result).toBeDefined();
+      expect(result).toHaveProperty("redirect");
+      if (!result || !("redirect" in result)) throw new Error("Expected a redirect result");
       expect(result?.redirect).toMatch(/^\/password\?/);
       expect(result?.redirect).toContain("loginName=user%40example.com");
       expect(result?.redirect).toContain("requestId=req123");
@@ -897,6 +903,8 @@ describe("sendLoginname", () => {
       });
 
       expect(result).toBeDefined();
+      expect(result).toHaveProperty("redirect");
+      if (!result || !("redirect" in result)) throw new Error("Expected a redirect result");
       expect(result?.redirect).toMatch(/^\/register\?/);
       expect(result?.redirect).toContain("organization=discovered-org-123");
       expect(result?.redirect).toContain("requestId=req123");
@@ -1017,6 +1025,8 @@ describe("sendLoginname", () => {
       });
 
       expect(result).toBeDefined();
+      expect(result).toHaveProperty("redirect");
+      if (!result || !("redirect" in result)) throw new Error("Expected a redirect result");
       expect(result?.redirect).toMatch(/^\/register\?/);
       expect(result?.redirect).toContain("organization=123456");
 
@@ -1357,6 +1367,8 @@ describe("sendLoginname", () => {
       });
 
       expect(result).toBeDefined();
+      expect(result).toHaveProperty("redirect");
+      if (!result || !("redirect" in result)) throw new Error("Expected a redirect result");
       expect(result?.redirect).toContain("organization=custom-org");
       expect(result?.redirect).toContain("requestId=req123");
     });

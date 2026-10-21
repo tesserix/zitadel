@@ -1,7 +1,9 @@
+import { productForClient } from "@/lib/product-login";
 import { cleanup, render } from "@testing-library/react";
 import { BrandingSettings } from "@zitadel/proto/zitadel/settings/v2/branding_settings_pb";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { DynamicTheme } from "./dynamic-theme";
+import { ProductLoginProvider } from "./product-login-provider";
 
 const branding = {
   lightTheme: { primaryColor: "#5b5fd6" },
@@ -38,6 +40,19 @@ describe("DynamicTheme aurora branding", () => {
 
     expect(container.querySelector("[data-aurora-root]")).toBeTruthy();
     expect(container.querySelectorAll("[data-aurora-wash]")).toHaveLength(3);
+  });
+
+  it.each(["side-by-side", "top-to-bottom"])("uses the verified product's genuine logo in %s", (layout) => {
+    process.env = { ...originalEnv, NEXT_PUBLIC_THEME_LAYOUT: layout, NEXT_PUBLIC_BASE_PATH: "/ui/v2/login" };
+    const { getByAltText } = render(
+      <ProductLoginProvider product={productForClient("392328865646707494")}>
+        <DynamicTheme branding={branding}>
+          <h1>Sign in</h1>
+          <form />
+        </DynamicTheme>
+      </ProductLoginProvider>,
+    );
+    expect(getByAltText("Roamie")).toHaveAttribute("src", "/ui/v2/login/products/roamie-mark.png");
   });
 
   it("shows the tenant's tagline on the brand panel", () => {

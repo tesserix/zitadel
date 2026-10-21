@@ -5,10 +5,16 @@ import { auroraIntensity, brandColor } from "@/lib/aurora";
 import { TenantLogin } from "@/lib/tenant-branding";
 import { useResponsiveLayout } from "@/lib/theme-hooks";
 import { AuroraAuthPanel } from "@tesserix/web";
-import { BrandingSettings } from "@zitadel/proto/zitadel/settings/v2/branding_settings_pb";
+import { create } from "@zitadel/client";
+import {
+  BrandingSettings,
+  BrandingSettingsSchema,
+  ThemeSchema,
+} from "@zitadel/proto/zitadel/settings/v2/branding_settings_pb";
 import React, { Children, ReactNode } from "react";
 import { AuroraBackground } from "./aurora-background";
 import { Card } from "./card";
+import { useProductLogin } from "./product-login-provider";
 import { ThemeWrapper } from "./theme-wrapper";
 
 /**
@@ -24,8 +30,8 @@ import { ThemeWrapper } from "./theme-wrapper";
  * - All children rendered in traditional centered layout
  */
 export function DynamicTheme({
-  branding,
-  tenant,
+  branding: organizationBranding,
+  tenant: organizationTenant,
   children,
 }: {
   children: ReactNode | ((isSideBySide: boolean) => ReactNode);
@@ -33,6 +39,30 @@ export function DynamicTheme({
   tenant?: TenantLogin;
 }) {
   const { isSideBySide } = useResponsiveLayout();
+  const product = useProductLogin();
+  const branding = product ? create(BrandingSettingsSchema, organizationBranding) : organizationBranding;
+  if (product && branding) {
+    branding.lightTheme = create(ThemeSchema, organizationBranding?.lightTheme);
+    Object.assign(branding.lightTheme, {
+      primaryColor: product.primaryColor,
+      backgroundColor: product.backgroundColor,
+      fontColor: product.textColor,
+    });
+    branding.darkTheme = create(ThemeSchema, organizationBranding?.darkTheme);
+    branding.darkTheme.primaryColor = product.primaryColor;
+  }
+  const tenant = product ? { auroraIntensity: 0.45 } : organizationTenant;
+  const logo = product ? (
+    <img
+      src={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}${product.logo}`}
+      alt={product.name}
+      height={80}
+      width={80}
+      className="rounded-2xl"
+    />
+  ) : branding ? (
+    <Logo lightSrc={branding.lightTheme?.logoUrl} darkSrc={branding.darkTheme?.logoUrl} height={150} width={150} />
+  ) : null;
 
   // Resolve children immediately to avoid passing functions through React
   const actualChildren: ReactNode = React.useMemo(() => {
@@ -64,14 +94,7 @@ export function DynamicTheme({
                       <AuroraBackground branding={branding} intensity={tenant?.auroraIntensity} />
                       <div className="relative z-10 mx-auto max-w-[440px] space-y-8">
                         {/* Logo and branding */}
-                        {branding && (
-                          <Logo
-                            lightSrc={branding.lightTheme?.logoUrl}
-                            darkSrc={branding.darkTheme?.logoUrl}
-                            height={150}
-                            width={150}
-                          />
-                        )}
+                        {logo}
 
                         {tenant?.tagline && (
                           <p data-tenant-tagline className="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
@@ -115,16 +138,7 @@ export function DynamicTheme({
                 brandColor={brandColor(branding)}
                 mode="auto"
                 intensity={auroraIntensity(tenant?.auroraIntensity)}
-                logo={
-                  branding && (
-                    <Logo
-                      lightSrc={branding.lightTheme?.logoUrl}
-                      darkSrc={branding.darkTheme?.logoUrl}
-                      height={150}
-                      width={150}
-                    />
-                  )
-                }
+                logo={logo}
                 className="min-h-dvh"
               >
                 {hasMultipleChildren ? (

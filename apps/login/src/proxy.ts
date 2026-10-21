@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { buildCSP } from "./lib/csp";
 import { applyCustomHeaders } from "./lib/custom-headers";
 import { createLogger } from "./lib/logger";
+import { headersForProductRequest } from "./lib/product-login";
 import { getIframeOrigins } from "./lib/server/security-settings";
 import { getServiceConfig } from "./lib/service-url";
 
@@ -13,7 +14,7 @@ export const config = {
 
 export async function proxy(request: NextRequest) {
   // Add the original URL as a header to all requests
-  const requestHeaders = new Headers(request.headers);
+  const requestHeaders = headersForProductRequest(request.headers, request.nextUrl);
 
   // Extract "organization" search param from the URL and set it as a header if available
   const organization = request.nextUrl.searchParams.get("organization");
