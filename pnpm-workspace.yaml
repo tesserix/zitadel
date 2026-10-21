@@ -9,6 +9,12 @@ exclude:
   - benchmark # because of the node 18 or 20 dependency
 
 overrides:
+  "sharp@>=0.34.0 <0.35.5": "0.35.5"
+  "@grpc/grpc-js@>=1.14.0 <1.14.5": "1.14.5"
+  "@opentelemetry/propagator-jaeger@>=2.0.0 <2.9.0": "2.9.0"
+  "brace-expansion@>=5.0.0 <5.0.11": "5.0.11"
+  "undici@>=6.0.0 <6.28.1": "6.28.1"
+  "http-cache-semantics@>=4.0.0 <4.3.0": "4.3.0"
   "tar@<7.5.11": "^7.5.11 <8.0.0"
   "flatted@<3.4.2": "^3.4.2"
   "rollup@>=4.0.0 <4.59.0": "^4.59.0"

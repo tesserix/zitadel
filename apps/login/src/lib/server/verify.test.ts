@@ -222,11 +222,9 @@ describe("sendVerification", () => {
 describe("initialSendVerification", () => {
   let mockSendEmailCode: any;
   let mockCreateInviteCode: any;
-  let originalBasePath: string | undefined;
 
   beforeEach(() => {
-    originalBasePath = process.env.NEXT_PUBLIC_BASE_PATH;
-    process.env.NEXT_PUBLIC_BASE_PATH = "/ui/v2/login";
+    vi.stubEnv("NEXT_PUBLIC_BASE_PATH", "/ui/v2/login");
 
     vi.clearAllMocks();
     mockSendEmailCode = zitadelSendEmailCode;
@@ -236,11 +234,7 @@ describe("initialSendVerification", () => {
   });
 
   afterEach(() => {
-    if (originalBasePath === undefined) {
-      delete process.env.NEXT_PUBLIC_BASE_PATH;
-    } else {
-      process.env.NEXT_PUBLIC_BASE_PATH = originalBasePath;
-    }
+    vi.unstubAllEnvs();
   });
 
   test("should call sendEmailCode with correct URL template for non-invite", async () => {
