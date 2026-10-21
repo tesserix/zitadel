@@ -3,10 +3,13 @@ import "@/styles/globals.scss";
 import { BackgroundWrapper } from "@/components/background-wrapper";
 import { LanguageProvider } from "@/components/language-provider";
 import { LanguageSwitcher } from "@/components/language-switcher";
+import { ProductLoginProvider } from "@/components/product-login-provider";
 import { Skeleton } from "@/components/skeleton";
 import { ThemeProvider } from "@/components/theme-provider";
 import ThemeSwitch from "@/components/theme-switch";
 import { LANGS, getLanguage } from "@/lib/i18n";
+import { PRODUCT_REQUEST_HEADER } from "@/lib/product-login";
+import { resolveProductLogin } from "@/lib/server/product-login";
 import { getServiceConfig } from "@/lib/service-url";
 import { getAllowedLanguages } from "@/lib/zitadel";
 import * as Tooltip from "@radix-ui/react-tooltip";
@@ -29,6 +32,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const _headers = await headers();
   const { serviceConfig } = getServiceConfig(_headers);
+  const product = await resolveProductLogin(serviceConfig, _headers.get(PRODUCT_REQUEST_HEADER));
 
   let languages = LANGS;
   try {
@@ -47,39 +51,41 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <head />
       <body>
         <ThemeProvider>
-          <Tooltip.Provider>
-            <Suspense
-              fallback={
-                <BackgroundWrapper
-                  className={`bg-background-light-600 dark:bg-background-dark-600 relative flex min-h-dvh flex-col justify-center`}
-                >
-                  <div className="relative mx-auto w-full max-w-[440px] py-8">
-                    <Skeleton>
-                      <div className="h-40"></div>
-                    </Skeleton>
-                    <div className="flex flex-row items-center justify-end space-x-4 py-4">
-                      <ThemeSwitch />
+          <ProductLoginProvider product={product}>
+            <Tooltip.Provider>
+              <Suspense
+                fallback={
+                  <BackgroundWrapper
+                    className={`bg-background-light-600 dark:bg-background-dark-600 relative flex min-h-dvh flex-col justify-center`}
+                  >
+                    <div className="relative mx-auto w-full max-w-[440px] py-8">
+                      <Skeleton>
+                        <div className="h-40"></div>
+                      </Skeleton>
+                      <div className="flex flex-row items-center justify-end space-x-4 py-4">
+                        <ThemeSwitch />
+                      </div>
                     </div>
-                  </div>
-                </BackgroundWrapper>
-              }
-            >
-              <LanguageProvider>
-                <BackgroundWrapper
-                  className={`bg-background-light-600 dark:bg-background-dark-600 relative flex min-h-dvh flex-col justify-center`}
-                >
-                  {/* No max width here: the aurora surface is the page background. */}
-                  <div className="relative w-full">
-                    {children}
-                    <div className="absolute right-0 bottom-0 z-10 flex flex-row items-center space-x-4 px-4 py-4 md:px-8">
-                      <LanguageSwitcher languages={languages} />
-                      <ThemeSwitch />
+                  </BackgroundWrapper>
+                }
+              >
+                <LanguageProvider>
+                  <BackgroundWrapper
+                    className={`bg-background-light-600 dark:bg-background-dark-600 relative flex min-h-dvh flex-col justify-center`}
+                  >
+                    {/* No max width here: the aurora surface is the page background. */}
+                    <div className="relative w-full">
+                      {children}
+                      <div className="absolute right-0 bottom-0 z-10 flex flex-row items-center space-x-4 px-4 py-4 md:px-8">
+                        <LanguageSwitcher languages={languages} />
+                        <ThemeSwitch />
+                      </div>
                     </div>
-                  </div>
-                </BackgroundWrapper>
-              </LanguageProvider>
-            </Suspense>
-          </Tooltip.Provider>
+                  </BackgroundWrapper>
+                </LanguageProvider>
+              </Suspense>
+            </Tooltip.Provider>
+          </ProductLoginProvider>
         </ThemeProvider>
       </body>
     </html>

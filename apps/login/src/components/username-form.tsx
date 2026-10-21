@@ -12,6 +12,8 @@ import { AutoSubmitForm } from "./auto-submit-form";
 import { BackButton } from "./back-button";
 import { Button, ButtonVariants } from "./button";
 import { TextInput } from "./input";
+import { ProductCredentialsForm } from "./product-credentials-form";
+import { useProductLogin } from "./product-login-provider";
 import { Spinner } from "./spinner";
 import { Translated } from "./translated";
 
@@ -31,7 +33,22 @@ type Props = {
   allowRegister: boolean;
 };
 
-export function UsernameForm({
+export function UsernameForm(props: Props) {
+  const product = useProductLogin();
+  const [otherMethod, setOtherMethod] = useState(false);
+  if (product?.combinedCredentials && props.requestId?.startsWith("oidc_") && !otherMethod)
+    return (
+      <>
+        <ProductCredentialsForm {...props} />
+        <button type="button" className="mt-3 min-h-11 w-full text-sm underline" onClick={() => setOtherMethod(true)}>
+          Use a passkey or another method
+        </button>
+      </>
+    );
+  return <DefaultUsernameForm {...props} />;
+}
+
+function DefaultUsernameForm({
   loginName,
   requestId,
   organization,
