@@ -51,17 +51,17 @@ func (u *UserMapper) GetID() string {
 
 // GetFirstName is an implementation of the [idp.User] interface.
 func (u *UserMapper) GetFirstName() string {
-	return ""
+	return u.profileString("given_name", "first_name")
 }
 
 // GetLastName is an implementation of the [idp.User] interface.
 func (u *UserMapper) GetLastName() string {
-	return ""
+	return u.profileString("family_name", "last_name")
 }
 
 // GetDisplayName is an implementation of the [idp.User] interface.
 func (u *UserMapper) GetDisplayName() string {
-	return ""
+	return u.profileString("name")
 }
 
 // GetNickname is an implementation of the [idp.User] interface.
@@ -71,12 +71,12 @@ func (u *UserMapper) GetNickname() string {
 
 // GetPreferredUsername is an implementation of the [idp.User] interface.
 func (u *UserMapper) GetPreferredUsername() string {
-	return ""
+	return u.profileString("preferred_username")
 }
 
 // GetEmail is an implementation of the [idp.User] interface.
 func (u *UserMapper) GetEmail() domain.EmailAddress {
-	return ""
+	return domain.EmailAddress(u.profileString("email"))
 }
 
 // IsEmailVerified is an implementation of the [idp.User] interface.
@@ -106,5 +106,14 @@ func (u *UserMapper) GetAvatarURL() string {
 
 // GetProfile is an implementation of the [idp.User] interface.
 func (u *UserMapper) GetProfile() string {
+	return ""
+}
+
+func (u *UserMapper) profileString(keys ...string) string {
+	for _, key := range keys {
+		if value, ok := u.RawInfo[key].(string); ok && value != "" {
+			return value
+		}
+	}
 	return ""
 }
