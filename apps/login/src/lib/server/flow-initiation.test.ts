@@ -709,6 +709,18 @@ describe("handleOIDCFlowInitiation — stale session cookie fallback (#12252)", 
     vi.unstubAllEnvs();
   });
 
+  test.each(["consumer-civiclens", "123-client", "111111"])("preserves the complete organization scope %s under the production base path", async (organization) => {
+    authRequestWith({ scope: [`urn:zitadel:iam:org:id:${organization}`] });
+    mockConstructUrl.mockImplementation((_req: unknown, path: string) => new URL(`https://example.com/ui/v2/login${path}`));
+
+    const response = await handleOIDCFlowInitiation(makeBaseParams());
+    const location = new URL(response.headers.get("location")!);
+
+    expect(location.pathname).toBe("/ui/v2/login/loginname");
+    expect(location.searchParams.get("organization")).toBe(organization);
+    expect(location.searchParams.get("requestId")).toBe("oidc_abc123");
+  });
+
   test("should redirect to /accounts when there are no live sessions but the cookie references an account", async () => {
     authRequestWith({});
 
