@@ -1,4 +1,4 @@
-FROM ghcr.io/tesserix/base-debian-runtime@sha256:5788bfc1e9bc4763484c875dcabcd972c7db8d16aecb9e1d58e40441ea60879a
+FROM ghcr.io/tesserix/base-distroless-static@sha256:7c885c37cb2f61400256bef39b9221b48a4860f8080101765da1c262b994cdf1
 COPY --chmod=0555 .artifacts/bin/linux/amd64/zitadel /app/zitadel
 USER 1000:1000
 EXPOSE 8080

@@ -24,3 +24,12 @@ pinned shared runtime. It publishes only
 upstream release workflow or publish to upstream registries. A failed image scan
 blocks release acceptance. Deployment requires a reviewed immutable image digest
 in the owning GitOps repository and the normal production rollout approval.
+
+The first image scan identified fixable Go standard-library and compression/HTTP2
+findings, plus unnecessary Debian utilities in the runtime. The patch release
+therefore builds with Go 1.27.3, updates `klauspost/compress` to 1.18.7 and
+`x/net` to 0.60.0 (with their required indirect dependencies), and uses the pinned
+shared distroless static runtime. The Go directive follows the patched module's
+minimum version. All identity-provider unit suites run before packaging; V2 user
+API tests run after Nx has generated their protocol packages. No application DB
+migration is introduced by these changes.
