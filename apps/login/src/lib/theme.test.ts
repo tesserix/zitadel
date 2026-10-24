@@ -20,6 +20,9 @@ describe("Theme Configuration", () => {
   beforeEach(() => {
     // Reset environment variables before each test
     process.env = { ...originalEnv };
+    for (const key of Object.keys(process.env)) {
+      if (key.startsWith("NEXT_PUBLIC_THEME_")) delete process.env[key];
+    }
   });
 
   afterEach(() => {

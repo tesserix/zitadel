@@ -33,6 +33,8 @@ jobs:
           node-version: '24'
           cache: 'pnpm'
 
+      - name: Set up test Valkey
+        uses: ./.github/actions/setup-valkey
       - name: Install dependencies
         env:
           NODE_AUTH_TOKEN: ${{ secrets.PKG_READ_TOKEN }}

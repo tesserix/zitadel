@@ -2,6 +2,7 @@ import { DynamicTheme } from "@/components/dynamic-theme";
 import { SignInWithIdp } from "@/components/sign-in-with-idp";
 import { Translated } from "@/components/translated";
 import { UsernameForm } from "@/components/username-form";
+import { getConsumerEmailPolicy } from "@/lib/server/consumer-email-policy";
 import { getServiceConfig } from "@/lib/service-url";
 import {
   getActiveIdentityProviders,
@@ -14,6 +15,7 @@ import { Organization } from "@zitadel/proto/zitadel/org/v2/org_pb";
 import { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { headers } from "next/headers";
+import Link from "next/link";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("loginname");
@@ -51,6 +53,11 @@ export default async function Page(props: { searchParams: Promise<Record<string 
 
   const branding = await getBrandingSettings({ serviceConfig, organization: organization ?? defaultOrganization });
 
+  const emailOTP =
+    organization?.startsWith("consumer-") &&
+    requestId?.startsWith("oidc_") &&
+    (await getConsumerEmailPolicy(serviceConfig, organization).catch(() => false));
+
   const tenant = await getTenantLogin({ serviceConfig, organization: organization ?? defaultOrganization });
 
   return (
@@ -65,6 +72,14 @@ export default async function Page(props: { searchParams: Promise<Record<string 
       </div>
 
       <div className="w-full">
+        {emailOTP && (
+          <Link
+            className="block rounded border p-3 text-center"
+            href={{ pathname: "/consumer/email", query: { requestId: requestId!.slice(5) } }}
+          >
+            Continue with email code
+          </Link>
+        )}
         {loginSettings?.allowLocalAuthentication && (
           <UsernameForm
             loginName={loginName}

@@ -1,0 +1,15 @@
+name: Set up test Valkey
+description: Build the pinned Valkey server used by login integration tests
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      run: |
+        set -euo pipefail
+        valkey_source="${RUNNER_TEMP}/consumer-email-valkey"
+        git init "$valkey_source"
+        git -C "$valkey_source" remote add origin https://github.com/valkey-io/valkey.git
+        git -C "$valkey_source" fetch --depth 1 origin c9e8005e9d0ec817e26c7db318861cb821409249
+        git -C "$valkey_source" checkout --detach FETCH_HEAD
+        make -C "$valkey_source" -j2 MALLOC=libc BUILD_TLS=no valkey-server
+        echo "$valkey_source/src" >> "$GITHUB_PATH"

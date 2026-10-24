@@ -634,3 +634,23 @@ describe("handleOIDCFlowInitiation — Prompt.LOGIN + loginHint requestId prefix
     );
   });
 });
+
+describe("consumer organization scope compatibility", () => {
+  test.each(["consumer-mediconnect", "consumer-civiclens", "123-client", "111111"])(
+    "preserves the complete organization ID %s",
+    async (organization) => {
+      vi.clearAllMocks();
+      const api = await import("@/lib/zitadel");
+      const urls = await import("@/lib/service-url");
+      vi.mocked(api.getAuthRequest).mockResolvedValue({
+        authRequest: { id: "request", scope: [`urn:zitadel:iam:org:id:${organization}`], prompt: [], uiLocales: [] },
+      } as never);
+      vi.mocked(urls.constructUrl).mockImplementation((_request, path) => new URL(`https://example.com/ui/v2/login${path}`));
+      const response = await handleOIDCFlowInitiation(makeBaseParams());
+      const location = new URL(response.headers.get("location")!);
+      expect(location.pathname).toBe("/ui/v2/login/loginname");
+      expect(location.searchParams.get("organization")).toBe(organization);
+      expect(location.searchParams.get("requestId")).toBe("oidc_abc123");
+    },
+  );
+});
