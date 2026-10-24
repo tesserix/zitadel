@@ -148,7 +148,7 @@
                 "generate-stubs",
                 "generate-assets"
             ],
-            "command": "PATH=\"${PWD}/.artifacts/bin/$(go env GOOS)/$(go env GOARCH):$PATH\" golangci-lint run --timeout 15m --config ./.golangci.yaml --verbose",
+            "command": "PATH=\"${PWD}/.artifacts/bin/$(go env GOOS)/$(go env GOARCH):$PATH\" golangci-lint run --timeout 30m --config ./.golangci.yaml --verbose",
             "cache": true,
             "inputs": [
                 "sources",

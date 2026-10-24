@@ -26,8 +26,9 @@ jobs:
     permissions:
       contents: read
     with:
-      node_version: "22"
+      node_version: "24"
     secrets:
+      PKG_READ_TOKEN: ${{ secrets.PKG_READ_TOKEN }}
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       NX_CLOUD_ACCESS_TOKEN_READONLY: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
 

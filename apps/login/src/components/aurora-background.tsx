@@ -10,11 +10,6 @@ type Props = {
 /** Decorative gradient field derived from the tenant's own primary colour. */
 export function AuroraBackground({ branding, intensity }: Props) {
   return (
-    <TesserixAurora
-      data-aurora-root
-      brandColor={brandColor(branding)}
-      mode="auto"
-      intensity={auroraIntensity(intensity)}
-    />
+    <TesserixAurora data-aurora-root brandColor={brandColor(branding)} mode="auto" intensity={auroraIntensity(intensity)} />
   );
 }
