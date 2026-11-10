@@ -20,7 +20,19 @@ const roamie: ProductLogin = {
   combinedCredentials: true,
 };
 
+const planningPoker: ProductLogin = {
+  name: "Planning Poker",
+  title: "Make room for your team.",
+  tagline: "Less guessing. More conversation. Plan your next sprint together.",
+  logo: "/products/planning-poker-mark.svg",
+  primaryColor: "#4F46E5",
+  backgroundColor: "#F3F4FF",
+  textColor: "#111827",
+  combinedCredentials: true,
+};
+
 const products: ReadonlyMap<string, ProductLogin> = new Map([
+  ["399002497852638210", planningPoker],
   ["392328865646707494", roamie],
   ["392328864774226726", roamie],
 ]);

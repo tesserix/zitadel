@@ -49,3 +49,13 @@ describe("product request context", () => {
     expect(incoming.get(PRODUCT_REQUEST_HEADER)).toBe("oidc_forged");
   });
 });
+
+it("uses Planning Poker branding only for its registered web client", () => {
+  expect(productForClient("399002497852638210")).toMatchObject({
+    name: "Planning Poker",
+    title: "Make room for your team.",
+    primaryColor: "#4F46E5",
+    combinedCredentials: true,
+  });
+  expect(productForClient("399002497852638210.attacker")).toBeUndefined();
+});
