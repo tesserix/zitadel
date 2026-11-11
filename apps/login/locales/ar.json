@@ -325,6 +325,7 @@
     },
     "title": "تسجيل",
     "description": "أنشئ حساب ZITADEL الخاص بك.",
+    "productDescription": "أنشئ حساب {product} الخاص بك.",
     "noMethodAvailableWarning": "لا توجد طريقة مصادقة متاحة. يرجى الاتصال بالمسؤول.",
     "selectMethod": "حدد الطريقة التي ترغب في المصادقة بها",
     "agreeTo": "للتسجيل يجب عليك الموافقة على الشروط والأحكام",

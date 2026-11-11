@@ -1,4 +1,5 @@
 import { DynamicTheme } from "@/components/dynamic-theme";
+import { ProductRegistrationDescription } from "@/components/product-registration-description";
 import { SetRegisterPasswordForm } from "@/components/set-register-password-form";
 import { Translated } from "@/components/translated";
 import { getServiceConfig } from "@/lib/service-url";
@@ -55,7 +56,7 @@ export default async function Page(props: { searchParams: Promise<Record<string 
           <Translated i18nKey="password.title" namespace="register" />
         </h1>
         <p className="ztdl-p">
-          <Translated i18nKey="description" namespace="register" />
+          <ProductRegistrationDescription />
         </p>
       </div>
 

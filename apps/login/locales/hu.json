@@ -325,6 +325,7 @@
     },
     "title": "Regisztráció",
     "description": "Hozd létre a Zitadel fiókodat.",
+    "productDescription": "Hozd létre a {product} fiókodat.",
     "noMethodAvailableWarning": "Nincs elérhető hitelesítési módszer. Fordulj a rendszergazdához.",
     "selectMethod": "Válaszd ki, milyen módszerrel szeretnél hitelesíteni",
     "agreeTo": "A regisztrációhoz el kell fogadnod a felhasználási feltételeket",

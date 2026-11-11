@@ -325,6 +325,7 @@
     },
     "title": "Rejestracja",
     "description": "Utwórz konto Zitadel.",
+    "productDescription": "Utwórz konto {product}.",
     "noMethodAvailableWarning": "Brak dostępnych metod uwierzytelniania. Skontaktuj się z administratorem.",
     "selectMethod": "Wybierz metodę uwierzytelniania, której chcesz użyć",
     "agreeTo": "Aby się zarejestrować, musisz zaakceptować warunki korzystania",

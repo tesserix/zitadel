@@ -325,6 +325,7 @@
     },
     "title": "Kayıt",
     "description": "Zitadel hesabınızı oluşturun.",
+    "productDescription": "{product} hesabınızı oluşturun.",
     "noMethodAvailableWarning": "Kullanılabilir kimlik doğrulama yöntemi yok. Lütfen yöneticinizle iletişime geçin.",
     "selectMethod": "Kimlik doğrulaması yapmak istediğiniz yöntemi seçin",
     "agreeTo": "Kayıt olmak için şartları ve koşulları kabul etmelisiniz",
