@@ -318,6 +318,7 @@
     },
     "title": "登録",
     "description": "Zitadelアカウントを作成します。",
+    "productDescription": "{product}アカウントを作成します。",
     "noMethodAvailableWarning": "使用可能な認証方法がありません。管理者にお問い合わせください。",
     "selectMethod": "認証に使用する方法を選択してください",
     "agreeTo": "登録するには利用規約に同意する必要があります",

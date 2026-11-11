@@ -325,6 +325,7 @@
     },
     "title": "Registreren",
     "description": "Maak jouw Zitadel-account aan.",
+    "productDescription": "Maak jouw {product}-account aan.",
     "noMethodAvailableWarning": "Geen authenticatiemethode beschikbaar. Neem contact op met jouw beheerder.",
     "selectMethod": "Selecteer de methode waarmee u wilt verifiëren",
     "agreeTo": "Om te registreren moet u akkoord gaan met de voorwaarden",

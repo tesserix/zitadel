@@ -1,5 +1,6 @@
 import { Alert } from "@/components/alert";
 import { DynamicTheme } from "@/components/dynamic-theme";
+import { ProductRegistrationDescription } from "@/components/product-registration-description";
 import { RegisterForm } from "@/components/register-form";
 import { SignInWithIdp } from "@/components/sign-in-with-idp";
 import { Translated } from "@/components/translated";
@@ -92,7 +93,7 @@ export default async function Page(props: { searchParams: Promise<Record<string 
           <Translated i18nKey="title" namespace="register" />
         </h1>
         <p className="ztdl-p">
-          <Translated i18nKey="description" namespace="register" />
+          <ProductRegistrationDescription />
         </p>
       </div>
 

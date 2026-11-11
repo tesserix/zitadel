@@ -325,6 +325,7 @@
     },
     "title": "Cadastrar",
     "description": "Crie sua conta Zitadel.",
+    "productDescription": "Crie sua conta {product}.",
     "noMethodAvailableWarning": "Nenhum método de autenticação disponível. Por favor, entre em contato com o administrador.",
     "selectMethod": "Selecione o método de autenticação desejado",
     "agreeTo": "Para se cadastrar, você deve concordar com os termos e condições",
